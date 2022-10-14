@@ -1,0 +1,4 @@
+create a global array {empty, empty, empty,..... 3x3}
+update the array per move via a click
+store the address of the array in a separate array of object if possible
+when redering grid, create a separate function to render board if empty, render nth, if x render image x, if o render image o
