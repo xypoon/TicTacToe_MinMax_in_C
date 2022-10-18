@@ -1,6 +1,6 @@
 // Compile Code
 // As you add new SDL2 libraries, add their dll name to the compile command
-// gcc -I src/include -L src/lib -o main tictactoe.c -lmingw32 -lSDL2main -lSDL2 -lSDL2_image
+// gcc -I src/include -L src/lib -o main tictactoe.c -lmingw32 -lSDL2main -lSDL2
 
 //  Import Libraries
 #include <SDL2/SDL.h>
@@ -31,7 +31,7 @@
 typedef struct
 {
   int state;
-  int playerMove;
+  int playerTurn;
   int board[N * N];
 } GameState;
 
@@ -142,12 +142,28 @@ int processEvents(SDL_Renderer *renderer, SDL_Window *window, GameState *game)
       // SDL_Rect oRect = {event.button.x, event.button.y, 100, 100};
       // SDL_RenderCopy(renderer, game->o, NULL, &oRect);
       printf("%d,%d\n", event.button.y, event.button.x);
+      // playerMove(&game);
       break;
     }
     }
   }
   return done;
 }
+
+// void playerMove(GameState *game)
+// {
+//   static int box = 0;
+//   game->board[box] = game->playerTurn;
+//   if (game->playerTurn == PLAYER_O)
+//   {
+//     game->playerTurn = PLAYER_X;
+//   }
+//   else
+//   {
+//     game->playerTurn = PLAYER_O;
+//   }
+//   box++;
+// }
 
 // Program Start
 int main(int argc, char *argv[])
@@ -162,8 +178,8 @@ int main(int argc, char *argv[])
       "TicTacToe Game Window", // Window Title
       SDL_WINDOWPOS_UNDEFINED, // X-pos of window
       SDL_WINDOWPOS_UNDEFINED, // y-pos of window
-      640,                     // width, in pixels
-      480,                     // width, in pixels
+      SCREEN_WIDTH,            // width, in pixels
+      SCREEN_HEIGHT,           // width, in pixels
       0                        // flags
   );
 
@@ -171,12 +187,12 @@ int main(int argc, char *argv[])
 
   // create board
   GameState gameState = {
-      .board = {PLAYER_X, EMPTY, EMPTY,
-                EMPTY, PLAYER_X, EMPTY,
-                EMPTY, EMPTY, PLAYER_X},
-      .playerMove = PLAYER_X,
+      .board = {EMPTY, EMPTY, EMPTY,
+                EMPTY, EMPTY, EMPTY,
+                EMPTY, EMPTY, EMPTY},
+      .playerTurn = PLAYER_X,
       .state = RUNNING_STATE};
-      
+
   // Event Loop
   int done = 0;
   while (!done)
@@ -193,10 +209,6 @@ int main(int argc, char *argv[])
     // Delay Refresh so as too not overun
     SDL_Delay(100);
   }
-
-  // Unload Memory of textures and images
-  SDL_DestroyTexture(gameState.x);
-  SDL_DestroyTexture(gameState.o);
 
   // Shutdown
   SDL_DestroyWindow(window);
