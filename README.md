@@ -2,6 +2,9 @@
 
 Heres our [TODO List](./Todo.md)
 
+# Build
+Build with `ctrl-shift-b` in VSCode
+
 ### Weightage
 1. `50%` : GUI + manual two players mode (Task 1 + Task 2)
 2. `30%` : AI MiniMax algorithm covering one player mode (Task 3)
