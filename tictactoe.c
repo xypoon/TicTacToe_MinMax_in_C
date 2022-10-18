@@ -8,8 +8,6 @@
 #include <stdlib.h>
 #include <math.h>
 
-// Declare Functions
-
 // Declare Variables
 #define N 3
 
@@ -34,6 +32,57 @@ typedef struct
   int playerTurn;
   int board[N * N];
 } GameState;
+
+// Declare Functions
+void playerMove(GameState *game);
+
+void DrawCircle(SDL_Renderer *renderer, int centreX, int centreY)
+{
+  static int radius = 50;
+  const int diameter = (radius * 2);
+
+  int x = (radius - 1);
+  int y = 0;
+  int tx = 1;
+  int ty = 1;
+  int error = (tx - diameter);
+
+  while (x >= y)
+  {
+    // Each of the following renders an octant of the circle
+    SDL_RenderDrawPoint(renderer, centreX + x, centreY - y);
+    SDL_RenderDrawPoint(renderer, centreX + x, centreY + y);
+    SDL_RenderDrawPoint(renderer, centreX - x, centreY - y);
+    SDL_RenderDrawPoint(renderer, centreX - x, centreY + y);
+    SDL_RenderDrawPoint(renderer, centreX + y, centreY - x);
+    SDL_RenderDrawPoint(renderer, centreX + y, centreY + x);
+    SDL_RenderDrawPoint(renderer, centreX - y, centreY - x);
+    SDL_RenderDrawPoint(renderer, centreX - y, centreY + x);
+
+    if (error <= 0)
+    {
+      ++y;
+      error += ty;
+      ty += 2;
+    }
+
+    if (error > 0)
+    {
+      --x;
+      tx += 2;
+      error += (tx - diameter);
+    }
+  }
+}
+
+void render_o(SDL_Renderer *renderer, int row, int column)
+{
+  const float half_box_side = fmin(CELL_WIDTH, CELL_HEIGHT) * 0.25;
+  const float center_x = CELL_WIDTH * 0.5 + column * CELL_WIDTH;
+  const float center_y = CELL_HEIGHT * 0.5 + row * CELL_HEIGHT;
+    SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+  DrawCircle(renderer, center_x, center_y);
+}
 
 void render_x(SDL_Renderer *renderer, int row, int column)
 {
@@ -86,7 +135,7 @@ void render_board(SDL_Renderer *renderer, const int *board)
         break;
 
       case PLAYER_O:
-        render_x(renderer, i, j);
+        render_o(renderer, i, j);
         break;
 
       default:
@@ -136,13 +185,12 @@ int processEvents(SDL_Renderer *renderer, SDL_Window *window, GameState *game)
       break;
     case SDL_MOUSEBUTTONDOWN:
     {
-      // click_on_cell(&game,
-      //               e.button.y,
-      //               e.button.x);
-      // SDL_Rect oRect = {event.button.x, event.button.y, 100, 100};
-      // SDL_RenderCopy(renderer, game->o, NULL, &oRect);
       printf("%d,%d\n", event.button.y, event.button.x);
-      // playerMove(&game);
+      playerMove(game);
+      for (int x = 0; x < 9; x++)
+      {
+        printf("%d", game->board[x]);
+      }
       break;
     }
     }
@@ -150,20 +198,20 @@ int processEvents(SDL_Renderer *renderer, SDL_Window *window, GameState *game)
   return done;
 }
 
-// void playerMove(GameState *game)
-// {
-//   static int box = 0;
-//   game->board[box] = game->playerTurn;
-//   if (game->playerTurn == PLAYER_O)
-//   {
-//     game->playerTurn = PLAYER_X;
-//   }
-//   else
-//   {
-//     game->playerTurn = PLAYER_O;
-//   }
-//   box++;
-// }
+void playerMove(GameState *game)
+{
+  static int box = 0;
+  game->board[box] = game->playerTurn;
+  if (game->playerTurn == PLAYER_O)
+  {
+    game->playerTurn = PLAYER_X;
+  }
+  else
+  {
+    game->playerTurn = PLAYER_O;
+  }
+  box++;
+}
 
 // Program Start
 int main(int argc, char *argv[])
