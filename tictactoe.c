@@ -30,7 +30,7 @@ typedef struct
 {
   int state;
   int playerTurn;
-  int board[N][N];
+  int board[N * N];
 } GameState;
 
 // Declare Functions
@@ -146,18 +146,20 @@ void render_board(SDL_Renderer *renderer, const int *board)
   }
 }
 
-// int win(const int board[9]) {
-//     //determines if a player has won, returns 0 otherwise.
-//     unsigned wins[8][3] = {{0,1,2},{3,4,5},{6,7,8},{0,3,6},{1,4,7},{2,5,8},{0,4,8},{2,4,6}};
-//     int i;
-//     for(i = 0; i < 8; ++i) {
-//         if(board[wins[i][0]] != 0 &&
-//            board[wins[i][0]] == board[wins[i][1]] &&
-//            board[wins[i][0]] == board[wins[i][2]])
-//             return board[wins[i][2]];
-//     }
-//     return 0;
-// }
+int win(const int board[9])
+{
+  // determines if a player has won, returns 0 otherwise.
+  unsigned wins[8][3] = {{0, 1, 2}, {3, 4, 5}, {6, 7, 8}, {0, 3, 6}, {1, 4, 7}, {2, 5, 8}, {0, 4, 8}, {2, 4, 6}};
+  int i;
+  for (i = 0; i < 8; ++i)
+  {
+    if (board[wins[i][0]] != 0 &&
+        board[wins[i][0]] == board[wins[i][1]] &&
+        board[wins[i][0]] == board[wins[i][2]])
+      return board[wins[i][2]];
+  }
+  return 0;
+}
 
 void reset_board(GameState *game)
 {
@@ -214,6 +216,18 @@ int processEvents(SDL_Renderer *renderer, SDL_Window *window, GameState *game)
       {
         printf("%d", game->board[x]);
       }
+      switch(win(game->board)) {
+        case 0:
+            printf("A draw. How droll.\n");
+            break;
+        case 1:
+            //draw(game->board);
+            printf("You lose.\n");
+            break;
+        case -1:
+            printf("You win. Inconceivable!\n");
+            break;
+    }
       break;
     }
     }
