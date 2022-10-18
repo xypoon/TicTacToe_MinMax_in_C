@@ -31,10 +31,12 @@ typedef struct
   int state;
   int playerTurn;
   int board[N * N];
+  int turn;
 } GameState;
 
 // Declare Functions
-void playerMove(GameState *game);
+void playerMove(GameState *game, int row, int column);
+void draw_in_terminal(int b[9]);
 
 void DrawCircle(SDL_Renderer *renderer, int centreX, int centreY)
 {
@@ -210,28 +212,11 @@ int processEvents(SDL_Renderer *renderer, SDL_Window *window, GameState *game)
       break;
     case SDL_MOUSEBUTTONDOWN:
     {
-      // printf("%d,%d\n", event.button.y, event.button.x);
-      playerMove(game);
-      // for (int x = 0; x < 9; x++)
-      //{
-      //   printf("%d", game->board[x]);
-      // }
+      // By dividing the position of the reference location with the width/height of the cell, integer returns the floor value which can be used to reference the cell to plot to
+      int row = event.button.y / CELL_HEIGHT;
+      int col = event.button.x / CELL_WIDTH;
+      playerMove(game, row, col);
 
-      draw(game->board);
-
-      switch (win(game->board))
-      {
-      case 0:
-        printf("A draw. How droll.\n");
-        break;
-      case 1:
-        draw(game->board);
-        printf("You lose.\n");
-        break;
-      case -1:
-        printf("You win. Inconceivable!\n");
-        break;
-      }
       break;
     }
     }
@@ -239,10 +224,44 @@ int processEvents(SDL_Renderer *renderer, SDL_Window *window, GameState *game)
   return done;
 }
 
-void playerMove(GameState *game)
+void playerMove(GameState *game, int row, int column)
 {
-  static int box = 0;
-  game->board[box] = game->playerTurn;
+  if (game->board[row * N + column] == EMPTY)
+  {
+    game->board[row * N + column] = game->playerTurn;
+    // switch_player(game);
+    // game_over_condition(game);
+  }
+
+  // Draw in Console
+  draw_in_terminal(game->board);
+
+  // Check win condition
+  switch (win(game->board))
+  {
+  case 0:
+    if (game->turn == 8)
+    {
+      printf("A draw. How droll.\n");
+    }
+    break;
+  case 1:
+    if (game->playerTurn == 1)
+    {
+      printf("Player X wins.\n");
+    }
+    else
+    {
+      printf("Player O wins.\n");
+    }
+
+    break;
+    // case -1:
+    //   printf("You win. Inconceivable!\n");
+    //   break;
+  }
+
+  // Switch Player Turn
   if (game->playerTurn == PLAYER_O)
   {
     game->playerTurn = PLAYER_X;
@@ -251,7 +270,18 @@ void playerMove(GameState *game)
   {
     game->playerTurn = PLAYER_O;
   }
-  box++;
+}
+
+void click_on_cell(GameState *game, int row, int column)
+{
+  if (game->state == RUNNING_STATE)
+  {
+    playerMove(game, row, column);
+  }
+  else
+  {
+    reset_board(game);
+  }
 }
 
 // Program Start
@@ -280,7 +310,8 @@ int main(int argc, char *argv[])
                 EMPTY, EMPTY, EMPTY,
                 EMPTY, EMPTY, EMPTY},
       .playerTurn = PLAYER_X,
-      .state = RUNNING_STATE};
+      .state = RUNNING_STATE,
+      .turn = 0};
 
   // Event Loop
   int done = 0;
@@ -308,16 +339,16 @@ char gridChar(int i)
 {
   switch (i)
   {
-  case -1:
+  case 1:
     return 'X';
   case 0:
     return ' ';
-  case 1:
+  case 2:
     return 'O';
   }
 }
 
-void draw(int b[9])
+void draw_in_terminal(int b[9])
 {
   printf(" %c | %c | %c\n", gridChar(b[0]), gridChar(b[1]), gridChar(b[2]));
   printf("---+---+---\n");
