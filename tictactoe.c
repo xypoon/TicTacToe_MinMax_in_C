@@ -80,7 +80,7 @@ void render_o(SDL_Renderer *renderer, int row, int column)
   const float half_box_side = fmin(CELL_WIDTH, CELL_HEIGHT) * 0.25;
   const float center_x = CELL_WIDTH * 0.5 + column * CELL_WIDTH;
   const float center_y = CELL_HEIGHT * 0.5 + row * CELL_HEIGHT;
-    SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+  SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
   DrawCircle(renderer, center_x, center_y);
 }
 
@@ -146,6 +146,29 @@ void render_board(SDL_Renderer *renderer, const int *board)
   }
 }
 
+// int win(const int board[9]) {
+//     //determines if a player has won, returns 0 otherwise.
+//     unsigned wins[8][3] = {{0,1,2},{3,4,5},{6,7,8},{0,3,6},{1,4,7},{2,5,8},{0,4,8},{2,4,6}};
+//     int i;
+//     for(i = 0; i < 8; ++i) {
+//         if(board[wins[i][0]] != 0 &&
+//            board[wins[i][0]] == board[wins[i][1]] &&
+//            board[wins[i][0]] == board[wins[i][2]])
+//             return board[wins[i][2]];
+//     }
+//     return 0;
+// }
+
+void reset_board(GameState *game)
+{
+  game->playerTurn = PLAYER_X;
+  game->state = RUNNING_STATE;
+  for (int i = 0; i < N * N; ++i)
+  {
+    game->board[i] = EMPTY;
+  }
+}
+
 int processEvents(SDL_Renderer *renderer, SDL_Window *window, GameState *game)
 {
   // SDL Event Listener
@@ -185,7 +208,7 @@ int processEvents(SDL_Renderer *renderer, SDL_Window *window, GameState *game)
       break;
     case SDL_MOUSEBUTTONDOWN:
     {
-      printf("%d,%d\n", event.button.y, event.button.x);
+      //printf("%d,%d\n", event.button.y, event.button.x);
       playerMove(game);
       for (int x = 0; x < 9; x++)
       {
