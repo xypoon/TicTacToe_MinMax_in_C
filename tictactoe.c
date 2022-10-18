@@ -168,6 +168,7 @@ void reset_board(GameState *game)
 {
   game->playerTurn = PLAYER_X;
   game->state = RUNNING_STATE;
+  game->turn = 0;
   for (int i = 0; i < N * N; ++i)
   {
     game->board[i] = EMPTY;
@@ -216,7 +217,14 @@ int processEvents(SDL_Renderer *renderer, SDL_Window *window, GameState *game)
       // By dividing the position of the reference location with the width/height of the cell, integer returns the floor value which can be used to reference the cell to plot to
       int row = event.button.y / CELL_HEIGHT;
       int col = event.button.x / CELL_WIDTH;
-      playerMove(game, row, col);
+      if (game->state == RUNNING_STATE)
+      {
+        playerMove(game, row, col);
+      }
+      else
+      {
+        reset_board(game);
+      }
 
       break;
     }
@@ -245,10 +253,12 @@ void playerMove(GameState *game, int row, int column)
     case 1:
       if (game->playerTurn == 1)
       {
+        game->state = PLAYER_X_WON_STATE;
         printf("Player X wins.\n");
       }
       else
       {
+        game->state = PLAYER_O_WON_STATE;
         printf("Player O wins.\n");
       }
 
