@@ -30,7 +30,7 @@ typedef struct
 {
   int state;
   int playerTurn;
-  int board[N * N];
+  int board[N][N];
 } GameState;
 
 // Declare Functions
@@ -208,7 +208,7 @@ int processEvents(SDL_Renderer *renderer, SDL_Window *window, GameState *game)
       break;
     case SDL_MOUSEBUTTONDOWN:
     {
-      //printf("%d,%d\n", event.button.y, event.button.x);
+      // printf("%d,%d\n", event.button.y, event.button.x);
       playerMove(game);
       for (int x = 0; x < 9; x++)
       {
