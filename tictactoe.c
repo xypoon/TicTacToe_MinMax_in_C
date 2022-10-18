@@ -150,7 +150,8 @@ void render_board(SDL_Renderer *renderer, const int *board)
 
 int win(const int board[9])
 {
-  // determines if a player has won, returns 0 otherwise.
+
+  // determines if a player has won return 1, returns 0 otherwise.
   unsigned wins[8][3] = {{0, 1, 2}, {3, 4, 5}, {6, 7, 8}, {0, 3, 6}, {1, 4, 7}, {2, 5, 8}, {0, 4, 8}, {2, 4, 6}};
   int i;
   for (i = 0; i < 8; ++i)
@@ -158,7 +159,7 @@ int win(const int board[9])
     if (board[wins[i][0]] != 0 &&
         board[wins[i][0]] == board[wins[i][1]] &&
         board[wins[i][0]] == board[wins[i][2]])
-      return board[wins[i][2]];
+      return 1;
   }
   return 0;
 }
@@ -229,47 +230,45 @@ void playerMove(GameState *game, int row, int column)
   if (game->board[row * N + column] == EMPTY)
   {
     game->board[row * N + column] = game->playerTurn;
-    // switch_player(game);
-    // game_over_condition(game);
-  }
+    // Draw in Console
+    draw_in_terminal(game->board);
 
-  // Draw in Console
-  draw_in_terminal(game->board);
-
-  // Check win condition
-  switch (win(game->board))
-  {
-  case 0:
-    if (game->turn == 8)
+    // Check win condition
+    switch (win(game->board))
     {
-      printf("A draw. How droll.\n");
+    case 0:
+      if (game->turn == 8 && win(game->board) != 1)
+      {
+        printf("A draw. How droll.\n");
+      }
+      break;
+    case 1:
+      if (game->playerTurn == 1)
+      {
+        printf("Player X wins.\n");
+      }
+      else
+      {
+        printf("Player O wins.\n");
+      }
+
+      break;
+      // case -1:
+      //   printf("You win. Inconceivable!\n");
+      //   break;
     }
-    break;
-  case 1:
-    if (game->playerTurn == 1)
+
+    // Switch Player Turn
+    if (game->playerTurn == PLAYER_O)
     {
-      printf("Player X wins.\n");
+      game->playerTurn = PLAYER_X;
     }
     else
     {
-      printf("Player O wins.\n");
+      game->playerTurn = PLAYER_O;
     }
-
-    break;
-    // case -1:
-    //   printf("You win. Inconceivable!\n");
-    //   break;
   }
-
-  // Switch Player Turn
-  if (game->playerTurn == PLAYER_O)
-  {
-    game->playerTurn = PLAYER_X;
-  }
-  else
-  {
-    game->playerTurn = PLAYER_O;
-  }
+  game->turn++;
 }
 
 void click_on_cell(GameState *game, int row, int column)
