@@ -212,22 +212,26 @@ int processEvents(SDL_Renderer *renderer, SDL_Window *window, GameState *game)
     {
       // printf("%d,%d\n", event.button.y, event.button.x);
       playerMove(game);
-      for (int x = 0; x < 9; x++)
+      // for (int x = 0; x < 9; x++)
+      //{
+      //   printf("%d", game->board[x]);
+      // }
+
+      draw(game->board);
+
+      switch (win(game->board))
       {
-        printf("%d", game->board[x]);
+      case 0:
+        printf("A draw. How droll.\n");
+        break;
+      case 1:
+        draw(game->board);
+        printf("You lose.\n");
+        break;
+      case -1:
+        printf("You win. Inconceivable!\n");
+        break;
       }
-      switch(win(game->board)) {
-        case 0:
-            printf("A draw. How droll.\n");
-            break;
-        case 1:
-            //draw(game->board);
-            printf("You lose.\n");
-            break;
-        case -1:
-            printf("You win. Inconceivable!\n");
-            break;
-    }
       break;
     }
     }
@@ -298,4 +302,26 @@ int main(int argc, char *argv[])
   // Shutdown
   SDL_DestroyWindow(window);
   SDL_Quit();
+}
+
+char gridChar(int i)
+{
+  switch (i)
+  {
+  case -1:
+    return 'X';
+  case 0:
+    return ' ';
+  case 1:
+    return 'O';
+  }
+}
+
+void draw(int b[9])
+{
+  printf(" %c | %c | %c\n", gridChar(b[0]), gridChar(b[1]), gridChar(b[2]));
+  printf("---+---+---\n");
+  printf(" %c | %c | %c\n", gridChar(b[3]), gridChar(b[4]), gridChar(b[5]));
+  printf("---+---+---\n");
+  printf(" %c | %c | %c\n\n", gridChar(b[6]), gridChar(b[7]), gridChar(b[8]));
 }
