@@ -34,12 +34,16 @@ typedef struct
   int playerTurn;
   int board[N * N];
   int turn;
+  int gamemode;
 } GameState;
 
 // Declare Functions
 void playerMove(GameState *game, int row, int column);
 void draw_in_terminal(int b[9]);
-void select_gamemode(int col);
+void select_gamemode(int col, GameState *game);
+void botMove(GameState *game, int row, int column);
+int minimax(int board[9], int player);
+void computerMove(int board[9]);
 
 void DrawCircle(SDL_Renderer *renderer, int centreX, int centreY)
 {
@@ -222,7 +226,18 @@ int processEvents(SDL_Renderer *renderer, SDL_Window *window, GameState *game)
       int col = event.button.x / CELL_WIDTH;
       if (game->state == RUNNING_STATE)
       {
-        playerMove(game, row, col);
+        if (game->gamemode == 0)
+        {
+          playerMove(game, row, col);
+        }
+        else if (game->gamemode == 1)
+        {
+          botMove(game, row, col);
+        }
+        else
+        {
+          // impossible bot
+        }
       }
       else
       {
@@ -235,7 +250,7 @@ int processEvents(SDL_Renderer *renderer, SDL_Window *window, GameState *game)
   return done;
 }
 
-int processMenuEvents(SDL_Renderer *renderer, SDL_Window *window)
+int processMenuEvents(SDL_Renderer *renderer, SDL_Window *window, GameState *game)
 {
   // SDL Event Listener
   SDL_Event event;
@@ -275,7 +290,7 @@ int processMenuEvents(SDL_Renderer *renderer, SDL_Window *window)
       break;
     case SDL_MOUSEBUTTONDOWN:
     {
-      select_gamemode(event.button.y / CELL_HEIGHT);
+      select_gamemode(event.button.y / CELL_HEIGHT, game);
       menu = 1;
       break;
     }
@@ -284,20 +299,81 @@ int processMenuEvents(SDL_Renderer *renderer, SDL_Window *window)
   return menu;
 }
 
-void select_gamemode(int col)
+void select_gamemode(int col, GameState *game)
 {
   switch (col)
   {
   case 0:
-    printf("Player vs Player Selected\n");
+    game->gamemode = 0;
+    printf("Game mode %d, Player vs Player Selected\n", game->gamemode);
     break;
   case 1:
-    printf("Player vs AI (Easy) Selected\n");
+    game->gamemode = 1;
+    printf("Game mode %d, Player vs AI (Easy) Selected\n", game->gamemode);
     break;
   case 2:
-    printf("Player vs AI (Impossible) Selected\n");
+    game->gamemode = 2;
+    printf("Game mode %d, Player vs AI (Impossible) Selected\n", game->gamemode);
     break;
   }
+}
+
+void botMove(GameState *game, int row, int column)
+{
+  if (game->board[row * N + column] == EMPTY)
+  {
+    if (game->playerTurn == 2)
+    {
+      // printf("here");
+      computerMove(game->board);
+      draw_in_terminal(game->board);
+    }
+    else
+    {
+      // printf("here!!");
+      game->board[row * N + column] = 1;
+      draw_in_terminal(game->board);
+    }
+    // Draw in Console
+
+    // Check win condition
+    switch (win(game->board))
+    {
+    case 0:
+      if (game->turn == 8 && win(game->board) != 1)
+      {
+        printf("A draw. How droll.\n");
+      }
+      break;
+    case 1:
+      if (game->playerTurn == 1)
+      {
+        game->state = PLAYER_X_WON_STATE;
+        printf("Player X wins.\n");
+      }
+      else
+      {
+        game->state = PLAYER_O_WON_STATE;
+        printf("Player O wins.\n");
+      }
+
+      break;
+      // case -1:
+      //   printf("You win. Inconceivable!\n");
+      //   break;
+    }
+
+    // Switch Player Turn
+    if (game->playerTurn == PLAYER_O)
+    {
+      game->playerTurn = PLAYER_X;
+    }
+    else
+    {
+      game->playerTurn = PLAYER_O;
+    }
+  }
+  game->turn++;
 }
 
 void playerMove(GameState *game, int row, int column)
@@ -465,7 +541,7 @@ int main(int argc, char *argv[])
       while (menu == 0)
       {
 
-        menu = processMenuEvents(renderer, window);
+        menu = processMenuEvents(renderer, window, &gameState);
 
         // Delay Refresh so as too not overun
         SDL_Delay(100);
@@ -510,4 +586,55 @@ void draw_in_terminal(int b[9])
   printf(" %c | %c | %c\n", gridChar(b[3]), gridChar(b[4]), gridChar(b[5]));
   printf("---+---+---\n");
   printf(" %c | %c | %c\n\n", gridChar(b[6]), gridChar(b[7]), gridChar(b[8]));
+}
+
+void computerMove(int board[9])
+{
+  int move = -1;
+  int score = -2;
+  int i;
+  for (i = 0; i < 9; ++i)
+  {
+    if (board[i] == 0)
+    {
+      board[i] = 1;
+      int tempScore = -minimax(board, -1);
+      board[i] = 0;
+      if (tempScore > score)
+      {
+        score = tempScore;
+        move = i;
+      }
+    }
+  }
+  // returns a score based on minimax tree at a given node.
+  board[move] = 2;
+}
+int minimax(int board[9], int player)
+{
+  // How is the position like for player (their turn) on board?
+  int winner = win(board);
+  if (winner != 0)
+    return winner * player;
+
+  int move = -1;
+  int score = -2; // Losing moves are preferred to no move
+  int i;
+  for (i = 0; i < 9; ++i)
+  { // For all moves,
+    if (board[i] == 0)
+    {                    // If legal,
+      board[i] = player; // Try the move
+      int thisScore = -minimax(board, player * -1);
+      if (thisScore > score)
+      {
+        score = thisScore;
+        move = i;
+      }             // Pick the one that's worst for the opponent
+      board[i] = 0; // Reset board after try
+    }
+  }
+  if (move == -1)
+    return 0;
+  return score;
 }
