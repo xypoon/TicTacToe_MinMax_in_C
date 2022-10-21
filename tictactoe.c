@@ -15,11 +15,11 @@
 
 #define EMPTY 0
 #define PLAYER_X 1
-#define PLAYER_O 2
+#define PLAYER_O -1
 
 #define RUNNING_STATE 0
 #define PLAYER_X_WON_STATE 1
-#define PLAYER_O_WON_STATE 2
+#define PLAYER_O_WON_STATE -1
 #define TIE_STATE 3
 #define QUIT_STATE 4
 
@@ -27,6 +27,12 @@
 #define SCREEN_HEIGHT 480
 #define CELL_WIDTH (SCREEN_WIDTH / N)
 #define CELL_HEIGHT (SCREEN_HEIGHT / N)
+
+#define for_ij            \
+  for (i = 0; i < 3; i++) \
+    for (j = 0; j < 3; j++)
+
+int best_i, best_j;
 
 typedef struct
 {
@@ -45,6 +51,7 @@ void botMove(GameState *game);
 int minimax(int board[9], int player);
 void computerMove(int board[9]);
 void checkWin(GameState *game);
+int test_move(int val, int depth, GameState *game);
 
 void DrawCircle(SDL_Renderer *renderer, int centreX, int centreY)
 {
@@ -154,22 +161,6 @@ void render_board(SDL_Renderer *renderer, const int *board)
       }
     }
   }
-}
-
-int win(const int board[9])
-{
-
-  // determines if a player has won return 1, returns 0 otherwise.
-  unsigned wins[8][3] = {{0, 1, 2}, {3, 4, 5}, {6, 7, 8}, {0, 3, 6}, {1, 4, 7}, {2, 5, 8}, {0, 4, 8}, {2, 4, 6}};
-  int i;
-  for (i = 0; i < 8; ++i)
-  {
-    if (board[wins[i][0]] != 0 &&
-        board[wins[i][0]] == board[wins[i][1]] &&
-        board[wins[i][0]] == board[wins[i][2]])
-      return 1;
-  }
-  return 0;
 }
 
 void reset_board(GameState *game)
@@ -312,7 +303,7 @@ void select_gamemode(int col, GameState *game)
 
 void botMove(GameState *game)
 {
-  if (game->state == RUNNING_STATE && game->playerTurn == 2 && game->gamemode == 1)
+  if (game->state == RUNNING_STATE && game->playerTurn == -1 && game->gamemode == 1)
   {
     // printf("here");
     computerMove(game->board);
@@ -330,13 +321,28 @@ void botMove(GameState *game)
       game->playerTurn = PLAYER_O;
     }
   }
+  else if (game->state == RUNNING_STATE && game->playerTurn == -1 && game->gamemode == 2)
+  {
+    test_move(-1, 0, game);
+    game->board[best_i * 3 + best_j] = PLAYER_O;
+    draw_in_terminal(game->board);
+
+    checkWin(game);
+
+    // Switch Player Turn
+    if (game->playerTurn == PLAYER_O)
+    {
+      game->playerTurn = PLAYER_X;
+    }
+    else
+    {
+      game->playerTurn = PLAYER_O;
+    }
+  }
   else
   {
-    // printf("here!!");
-    // game->board[row * N + column] = 1;
-    // draw_in_terminal(game->board);
+    // Bot has nothing to do
   }
-  // Draw in Console
 }
 
 void playerMove(GameState *game, int row, int column)
@@ -360,6 +366,22 @@ void playerMove(GameState *game, int row, int column)
       game->playerTurn = PLAYER_O;
     }
   }
+}
+
+int win(const int board[9])
+{
+
+  // determines if a player has won return 1, returns 0 otherwise.
+  unsigned wins[8][3] = {{0, 1, 2}, {3, 4, 5}, {6, 7, 8}, {0, 3, 6}, {1, 4, 7}, {2, 5, 8}, {0, 4, 8}, {2, 4, 6}};
+  int i;
+  for (i = 0; i < 8; ++i)
+  {
+    if (board[wins[i][0]] != 0 &&
+        board[wins[i][0]] == board[wins[i][1]] &&
+        board[wins[i][0]] == board[wins[i][2]])
+      return board[wins[i][0]];
+  }
+  return 0;
 }
 
 void checkWin(GameState *game)
@@ -388,14 +410,13 @@ void checkWin(GameState *game)
     }
     else
     {
-      game->state = PLAYER_O_WON_STATE;
-      printf("turn: %d,player:%d\n", game->turn + 1, game->playerTurn);
-      printf("Player O wins.\n");
     }
     break;
-    // case -1:
-    //   printf("You win. Inconceivable!\n");
-    //   break;
+  case -1:
+    game->state = PLAYER_O_WON_STATE;
+    printf("turn: %d,player:%d\n", game->turn + 1, game->playerTurn);
+    printf("Player O wins.\n");
+    break;
   }
 }
 
@@ -583,7 +604,7 @@ void computerMove(int board[9])
     }
   }
   // returns a score based on minimax tree at a given node.
-  board[move] = 2;
+  board[move] = PLAYER_O;
 }
 int minimax(int board[9], int player)
 {
@@ -612,4 +633,34 @@ int minimax(int board[9], int player)
   if (move == -1)
     return 0;
   return score;
+}
+
+int test_move(int val, int depth, GameState *game)
+{
+  int i, j, score;
+  int best = -1, changed = 0;
+
+  if ((score = win(game->board)))
+    return (score == val) ? 1 : -1;
+
+  for_ij
+  {
+    if (game->board[i * 3 + j])
+      continue;
+
+    changed = game->board[i * 3 + j] = val;
+    score = -test_move(-val, depth + 1, game);
+    game->board[i * 3 + j] = 0;
+
+    if (score <= best)
+      continue;
+    if (!depth)
+    {
+      best_i = i;
+      best_j = j;
+    }
+    best = score;
+  }
+
+  return changed ? best : 0;
 }

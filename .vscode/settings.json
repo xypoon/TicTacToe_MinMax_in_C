@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "typeinfo": "c",
-        "functional": "c"
+        "functional": "c",
+        "random": "c"
     }
 }
