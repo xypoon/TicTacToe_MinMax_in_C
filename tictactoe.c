@@ -41,9 +41,10 @@ typedef struct
 void playerMove(GameState *game, int row, int column);
 void draw_in_terminal(int b[9]);
 void select_gamemode(int col, GameState *game);
-void botMove(GameState *game, int row, int column);
+void botMove(GameState *game);
 int minimax(int board[9], int player);
 void computerMove(int board[9]);
+void checkWin(GameState *game);
 
 void DrawCircle(SDL_Renderer *renderer, int centreX, int centreY)
 {
@@ -175,7 +176,7 @@ void reset_board(GameState *game)
 {
   game->playerTurn = PLAYER_X;
   game->state = RUNNING_STATE;
-  game->turn = 0;
+  game->turn = 1;
   for (int i = 0; i < N * N; ++i)
   {
     game->board[i] = EMPTY;
@@ -187,6 +188,8 @@ int processEvents(SDL_Renderer *renderer, SDL_Window *window, GameState *game)
   // SDL Event Listener
   SDL_Event event;
   int done = 0;
+
+  botMove(game);
 
   while (SDL_PollEvent(&event))
   {
@@ -226,18 +229,7 @@ int processEvents(SDL_Renderer *renderer, SDL_Window *window, GameState *game)
       int col = event.button.x / CELL_WIDTH;
       if (game->state == RUNNING_STATE)
       {
-        if (game->gamemode == 0)
-        {
-          playerMove(game, row, col);
-        }
-        else if (game->gamemode == 1)
-        {
-          botMove(game, row, col);
-        }
-        else
-        {
-          // impossible bot
-        }
+        playerMove(game, row, col);
       }
       else
       {
@@ -318,50 +310,15 @@ void select_gamemode(int col, GameState *game)
   }
 }
 
-void botMove(GameState *game, int row, int column)
+void botMove(GameState *game)
 {
-  if (game->board[row * N + column] == EMPTY)
+  if (game->state == RUNNING_STATE && game->playerTurn == 2 && game->gamemode == 1)
   {
-    if (game->playerTurn == 2)
-    {
-      // printf("here");
-      computerMove(game->board);
-      draw_in_terminal(game->board);
-    }
-    else
-    {
-      // printf("here!!");
-      game->board[row * N + column] = 1;
-      draw_in_terminal(game->board);
-    }
-    // Draw in Console
+    // printf("here");
+    computerMove(game->board);
+    draw_in_terminal(game->board);
 
-    // Check win condition
-    switch (win(game->board))
-    {
-    case 0:
-      if (game->turn == 8 && win(game->board) != 1)
-      {
-        printf("A draw. How droll.\n");
-      }
-      break;
-    case 1:
-      if (game->playerTurn == 1)
-      {
-        game->state = PLAYER_X_WON_STATE;
-        printf("Player X wins.\n");
-      }
-      else
-      {
-        game->state = PLAYER_O_WON_STATE;
-        printf("Player O wins.\n");
-      }
-
-      break;
-      // case -1:
-      //   printf("You win. Inconceivable!\n");
-      //   break;
-    }
+    checkWin(game);
 
     // Switch Player Turn
     if (game->playerTurn == PLAYER_O)
@@ -373,7 +330,13 @@ void botMove(GameState *game, int row, int column)
       game->playerTurn = PLAYER_O;
     }
   }
-  game->turn++;
+  else
+  {
+    // printf("here!!");
+    // game->board[row * N + column] = 1;
+    // draw_in_terminal(game->board);
+  }
+  // Draw in Console
 }
 
 void playerMove(GameState *game, int row, int column)
@@ -385,31 +348,7 @@ void playerMove(GameState *game, int row, int column)
     draw_in_terminal(game->board);
 
     // Check win condition
-    switch (win(game->board))
-    {
-    case 0:
-      if (game->turn == 8 && win(game->board) != 1)
-      {
-        printf("A draw. How droll.\n");
-      }
-      break;
-    case 1:
-      if (game->playerTurn == 1)
-      {
-        game->state = PLAYER_X_WON_STATE;
-        printf("Player X wins.\n");
-      }
-      else
-      {
-        game->state = PLAYER_O_WON_STATE;
-        printf("Player O wins.\n");
-      }
-
-      break;
-      // case -1:
-      //   printf("You win. Inconceivable!\n");
-      //   break;
-    }
+    checkWin(game);
 
     // Switch Player Turn
     if (game->playerTurn == PLAYER_O)
@@ -421,7 +360,43 @@ void playerMove(GameState *game, int row, int column)
       game->playerTurn = PLAYER_O;
     }
   }
-  game->turn++;
+}
+
+void checkWin(GameState *game)
+{
+  // Check win condition
+  switch (win(game->board))
+  {
+  case 0:
+    if (game->turn == 9 && win(game->board) != 1)
+    {
+      game->state = TIE_STATE;
+      printf("A draw. How droll.\n");
+    }
+    else
+    {
+      game->turn++;
+      printf("Not win, Now turn %d\n", game->turn);
+    }
+    break;
+  case 1:
+    if (game->playerTurn == 1)
+    {
+      game->state = PLAYER_X_WON_STATE;
+      printf("turn: %d,player:%d\n", game->turn + 1, game->playerTurn);
+      printf("Player X wins.\n");
+    }
+    else
+    {
+      game->state = PLAYER_O_WON_STATE;
+      printf("turn: %d,player:%d\n", game->turn + 1, game->playerTurn);
+      printf("Player O wins.\n");
+    }
+    break;
+    // case -1:
+    //   printf("You win. Inconceivable!\n");
+    //   break;
+  }
 }
 
 void click_on_cell(GameState *game, int row, int column)
@@ -464,7 +439,7 @@ int main(int argc, char *argv[])
                 EMPTY, EMPTY, EMPTY},
       .playerTurn = PLAYER_X,
       .state = RUNNING_STATE,
-      .turn = 0};
+      .turn = 1};
 
   // Event Loop
   int done = 0;
