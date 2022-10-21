@@ -51,7 +51,7 @@ void botMove(GameState *game);
 int minimax(int board[9], int player);
 void computerMove(int board[9]);
 void checkWin(GameState *game);
-int test_move(int val, int depth, GameState *game);
+int best_move(int val, int depth, GameState *game);
 
 void DrawCircle(SDL_Renderer *renderer, int centreX, int centreY)
 {
@@ -323,7 +323,7 @@ void botMove(GameState *game)
   }
   else if (game->state == RUNNING_STATE && game->playerTurn == -1 && game->gamemode == 2)
   {
-    test_move(-1, 0, game);
+    best_move(-1, 0, game);
     game->board[best_i * 3 + best_j] = PLAYER_O;
     draw_in_terminal(game->board);
 
@@ -635,7 +635,7 @@ int minimax(int board[9], int player)
   return score;
 }
 
-int test_move(int val, int depth, GameState *game)
+int best_move(int val, int depth, GameState *game)
 {
   int i, j, score;
   int best = -1, changed = 0;
@@ -649,7 +649,7 @@ int test_move(int val, int depth, GameState *game)
       continue;
 
     changed = game->board[i * 3 + j] = val;
-    score = -test_move(-val, depth + 1, game);
+    score = -best_move(-val, depth + 1, game);
     game->board[i * 3 + j] = 0;
 
     if (score <= best)
