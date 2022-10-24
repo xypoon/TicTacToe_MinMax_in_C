@@ -28,11 +28,7 @@
 #define CELL_WIDTH (SCREEN_WIDTH / N)
 #define CELL_HEIGHT (SCREEN_HEIGHT / N)
 
-#define for_ij            \
-  for (i = 0; i < 3; i++) \
-    for (j = 0; j < 3; j++)
-
-int best_i, best_j;
+int best_move;
 
 typedef struct
 {
@@ -51,7 +47,7 @@ void botMove(GameState *game);
 int minimax(int board[9], int player);
 void computerMove(int board[9]);
 void checkWin(GameState *game);
-int best_move(int val, int depth, GameState *game);
+int bestMove(int val, int depth, GameState *game);
 
 void DrawCircle(SDL_Renderer *renderer, int centreX, int centreY)
 {
@@ -323,8 +319,8 @@ void botMove(GameState *game)
   }
   else if (game->state == RUNNING_STATE && game->playerTurn == -1 && game->gamemode == 2)
   {
-    best_move(-1, 0, game);
-    game->board[best_i * 3 + best_j] = PLAYER_O;
+    bestMove(-1, 0, game);
+    game->board[best_move] = PLAYER_O;
     draw_in_terminal(game->board);
 
     checkWin(game);
@@ -635,29 +631,28 @@ int minimax(int board[9], int player)
   return score;
 }
 
-int best_move(int val, int depth, GameState *game)
+int bestMove(int val, int depth, GameState *game)
 {
-  int i, j, score;
+  int i, j, move, score;
   int best = -1, changed = 0;
 
   if ((score = win(game->board)))
     return (score == val) ? 1 : -1;
 
-  for_ij
+  for (move=0;move<9;move++)
   {
-    if (game->board[i * 3 + j])
+    if (game->board[move])
       continue;
 
-    changed = game->board[i * 3 + j] = val;
-    score = -best_move(-val, depth + 1, game);
-    game->board[i * 3 + j] = 0;
+    changed = game->board[move] = val;
+    score = -bestMove(-val, depth + 1, game);
+    game->board[move] = 0;
 
     if (score <= best)
       continue;
     if (!depth)
     {
-      best_i = i;
-      best_j = j;
+      best_move = move;
     }
     best = score;
   }
