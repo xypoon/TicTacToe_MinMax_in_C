@@ -22,7 +22,7 @@
 #define PLAYER_O_WON_STATE -1
 #define TIE_STATE 3
 #define QUIT_STATE 4
-
+  
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
 #define CELL_WIDTH (SCREEN_WIDTH / N)
@@ -602,6 +602,7 @@ void computerMove(int board[9])
   // returns a score based on minimax tree at a given node.
   board[move] = PLAYER_O;
 }
+
 int minimax(int board[9], int player)
 {
   // How is the position like for player (their turn) on board?

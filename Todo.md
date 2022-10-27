@@ -7,13 +7,13 @@ This is written in `markdown`.
 
 #### Tic-Tac-Toe
 
-- [ ] Tic-tac-toe game design 
-  - [ ] Using [GNUPlot](http://www.gnuplot.info/) as a base for the game.
-- [ ] 2-Player Mode
+- [X] Tic-tac-toe game design 
+  - [X] Using [SDL2](http://www.gnuplot.info/) as a base for the game.
+- [X] 2-Player Mode
 
 #### Single Player Mode
-- [ ] Machine Learning (Choose 1)
-  - [ ] Minimax Algrithm (Perfect/Imperfect)
+- [X] Machine Learning (Choose 1)
+  - [X] Minimax Algrithm (Perfect/Imperfect)
   - [ ] Neural Network
   - [ ] Navie Bayes
 
