@@ -2,6 +2,8 @@
     "files.associations": {
         "typeinfo": "c",
         "functional": "c",
-        "random": "c"
+        "random": "c",
+        "game.h": "c",
+        "sdl_ttf.h": "c"
     }
 }

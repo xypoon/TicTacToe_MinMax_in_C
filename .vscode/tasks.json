@@ -13,13 +13,15 @@
 				"src/lib",
 				"-g",
 				"${file}",
+				"${workspaceFolder}/logic.c",
+				"${workspaceFolder}/render.c",
 				"-o",
 				"${fileDirname}\\${fileBasenameNoExtension}.exe",
 				"-lmingw32",
 				"-lSDL2main",
 				"-lSDL2",
 				"-lSDL2_image",
-				"-lSDL2_ttf"
+				"-lSDL2_ttf",
 			],
 			"options": {
 				"cwd": "${fileDirname}"
