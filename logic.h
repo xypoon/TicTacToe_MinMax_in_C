@@ -2,21 +2,18 @@
 #define LOGIC_H_
 /* ^^ these are the include guards */
 
+/* Prototypes for the functions */
 int processEvents(SDL_Renderer *renderer, SDL_Window *window, GameState *game);
 
 int processMenuEvents(SDL_Renderer *renderer, SDL_Window *window, GameState *game);
 
-void select_gamemode(int col, GameState *game);
+void selectGamemode(int col, GameState *game);
 
 void botMove(GameState *game);
 
 void playerMove(GameState *game, int row, int column);
 
-int win(const int board[9]);
-
 void checkWin(GameState *game);
-
-void click_on_cell(GameState *game, int row, int column);
 
 char gridChar(int i);
 

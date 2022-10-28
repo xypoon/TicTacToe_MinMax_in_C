@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
   SDL_Renderer *renderer; // Declare a renderer
 
   SDL_Init(SDL_INIT_VIDEO); // Initialise SDL2
-  TTF_Init();
+  TTF_Init();               // Initialise SDL2_TTF for Menu Text Generation
 
   // Create an application window with the following settings
   window = SDL_CreateWindow(
@@ -33,30 +33,32 @@ int main(int argc, char *argv[])
       0                        // flags
   );
 
+  // Create renderer to render items created to
   renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
-  // create board
+  // Initialise GameState
   GameState gameState = {
+      // Initilise Empty Board
       .board = {EMPTY, EMPTY, EMPTY,
                 EMPTY, EMPTY, EMPTY,
                 EMPTY, EMPTY, EMPTY},
-      .playerTurn = PLAYER_X,
-      .state = RUNNING_STATE,
-      .turn = 1};
+      .playerTurn = PLAYER_X, // Set Player to go first
+      .state = RUNNING_STATE, // Set State to running
+      .turn = 1};             // Set default game turn 1
 
   // Event Loop
-  int done = 0;
-  int menu = 0;
-  while (!done)
+  int done = 0; // Initialise done = 0, if 1 means completed and will stop program
+  int menu = 0; // Initialise menu = 0, if 1 means completed and will exit menu
+  while (!done) // While loop to listen to events until user exits the game
   {
-    if (menu == 0)
+    if (menu == 0) // Check for state of menu, if menu = 0, render the menu
     {
-      renderMenu(renderer);
+      renderMenu(renderer); // Render the components of the menu
 
-      while (menu == 0)
+      while (menu == 0) // While loop to listen to events until user interacts with menu
       {
 
-        menu = processMenuEvents(renderer, window, &gameState);
+        menu = processMenuEvents(renderer, window, &gameState); // Listens to updates to menu value
 
         // Delay Refresh so as too not overun
         SDL_Delay(100);
@@ -65,18 +67,21 @@ int main(int argc, char *argv[])
 
     // Render Display Grid for Tic Tac Toe
     render_grid(renderer);
+
+    // Render the game on the grid when there are updates to the board
     render_board(renderer,
                  gameState.board);
 
+    //  Present the renderer
     SDL_RenderPresent(renderer);
-    // Check for Events
-    done = processEvents(renderer, window, &gameState);
+
+    done = processEvents(renderer, window, &gameState); // Listen for events to update done when user exits/quit the program
 
     // Delay Refresh so as too not overun
     SDL_Delay(100);
   }
 
-  // Shutdown
+  // Shutdown the program
   SDL_DestroyWindow(window);
   SDL_Quit();
 }

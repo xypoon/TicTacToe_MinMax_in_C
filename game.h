@@ -29,6 +29,4 @@ typedef struct
   int gamemode;
 } GameState;
 
-/* Prototypes for the functions */
-
 #endif

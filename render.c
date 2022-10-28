@@ -63,7 +63,6 @@ void DrawCircle(SDL_Renderer *renderer, int centreX, int centreY)
 
 void render_o(SDL_Renderer *renderer, int row, int column)
 {
-  const float half_box_side = fmin(CELL_WIDTH, CELL_HEIGHT) * 0.25;
   const float center_x = CELL_WIDTH * 0.5 + column * CELL_WIDTH;
   const float center_y = CELL_HEIGHT * 0.5 + row * CELL_HEIGHT;
   SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);

@@ -16,7 +16,7 @@
 				"${workspaceFolder}/logic.c",
 				"${workspaceFolder}/render.c",
 				"-o",
-				"${fileDirname}\\${fileBasenameNoExtension}.exe",
+				"tictactoe.exe",
 				"-lmingw32",
 				"-lSDL2main",
 				"-lSDL2",
