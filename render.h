@@ -3,6 +3,7 @@
 /* ^^ these are the include guards */
 
 /* Prototypes for the functions */
+void renderMenu(SDL_Renderer *renderer);
 void render_grid(SDL_Renderer *renderer);
 void render_board(SDL_Renderer *renderer, const int *board);
 
