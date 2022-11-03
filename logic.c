@@ -283,12 +283,12 @@ void computerMove(int board[9])
     int score = -1;
     int i;
     for (i = 0; i < 9; ++i)
-    {
-        if (board[i] == 0)
+    {                      // Loop for all moves,
+        if (board[i] == 0) // Check if move is empty
         {
-            board[i] = -1; // AI Test his move
-            int tempScore = -minimax(board, 1);
-            board[i] = 0; // Undo the AI test move
+            board[i] = -1;                      // AI Test his move
+            int tempScore = -minimax(board, 1); // Call Minmax for opposing player
+            board[i] = 0;                       // Undo the AI test move
             if (tempScore > score)
             {
                 score = tempScore;
@@ -311,10 +311,10 @@ int minimax(int board[9], int player)
     int score = -1; // Losing moves are preferred to no move
     int i;
     for (i = 0; i < 9; ++i)
-    { // For all moves,
-        if (board[i] == 0)
-        {                                                 // If legal,
-            board[i] = player;                            // Try the move
+    {                                                    // Loop for all moves,
+        if (board[i] == 0)                               // Check if move is empty
+        {                                                // If legal,
+            board[i] = player;                           // Try the move
             int thisScore = minimax(board, player * -1); // minmax the other player
             if (thisScore > score)
             {
@@ -324,10 +324,10 @@ int minimax(int board[9], int player)
             board[i] = 0; // Reset board after try
         }
     }
-    if (move == -1)
-    {
-        return 0; // So if no good move just exit
-    }
+    // if (move == -1)
+    // {
+    //     return 0; // So if no good move just exit
+    // }
     return score;
 }
 
@@ -356,7 +356,6 @@ int bestMove(int val, int depth, GameState *game)
         }
         best = score;
     }
-
     return changed ? best : 0;
 }
 
