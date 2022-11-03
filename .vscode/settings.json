@@ -4,6 +4,8 @@
         "functional": "c",
         "random": "c",
         "game.h": "c",
-        "sdl_ttf.h": "c"
+        "sdl_ttf.h": "c",
+        "stdio.h": "c",
+        "stdlib.h": "c"
     }
 }
