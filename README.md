@@ -1,7 +1,5 @@
 # CSC 1103 Tic-Tac-Toe Game
 
-Heres our [TODO List](./Todo.md)
-
 # Build
 Build with `ctrl-shift-b` in VSCode
 

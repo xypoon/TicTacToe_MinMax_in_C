@@ -205,16 +205,13 @@ void playerMove(GameState *game, int row, int column)
 
 int win(const int board[9])
 {
-    // list the different possible arrangement on the board to win
-    // determines if a player has won return 1, returns 0 otherwise.
-    unsigned wins[8][3] = {{0, 1, 2}, {3, 4, 5}, {6, 7, 8}, {0, 3, 6}, {1, 4, 7}, {2, 5, 8}, {0, 4, 8}, {2, 4, 6}};
-    int i;
-    for (i = 0; i < 8; ++i) // loop through the different outcomes to check if value on the board are 3 in a row
+    unsigned winsStates[8][3] = {{0, 1, 2}, {3, 4, 5}, {6, 7, 8}, {0, 3, 6}, {1, 4, 7}, {2, 5, 8}, {0, 4, 8}, {2, 4, 6}}; //ALl Possible winnable states on the board
+    for (int i = 0; i < 8; ++i) // loop through the different outcomes to check if value on the board are 3 in a row
     {
-        if (board[wins[i][0]] != 0 &&
-            board[wins[i][0]] == board[wins[i][1]] &&
-            board[wins[i][0]] == board[wins[i][2]])
-            return board[wins[i][0]]; // Return 1 if player wins, return -1 if AI wins
+        if (board[winsStates[i][0]] != 0 &&
+            board[winsStates[i][0]] == board[winsStates[i][1]] &&
+            board[winsStates[i][0]] == board[winsStates[i][2]])
+            return board[winsStates[i][0]]; // Return 1 if Player X Wins, return -1 if Player O Wins
     }
     return 0;
 }
@@ -240,7 +237,7 @@ void checkWin(GameState *game)
         if (game->playerTurn == 1) // Player X wins
         {
             game->state = PLAYER_X_WON_STATE;
-            printf("turn: %d,player:%d\n", game->turn + 1, game->playerTurn);
+            printf("turn: %d, player:%d\n", game->turn + 1, game->playerTurn);
             printf("Player X wins.\n");
         }
         else
@@ -249,7 +246,7 @@ void checkWin(GameState *game)
         break;
     case -1: // Player O wins
         game->state = PLAYER_O_WON_STATE;
-        printf("turn: %d,player:%d\n", game->turn + 1, game->playerTurn);
+        printf("turn: %d, player:%d\n", game->turn + 1, game->playerTurn);
         printf("Player O wins.\n");
         break;
     }
@@ -282,52 +279,47 @@ void computerMove(int board[9])
     int move = -1;
     int score = -1;
     int i;
-    for (i = 0; i < 9; ++i)
-    {                      // Loop for all moves,
-        if (board[i] == 0) // Check if move is empty
+    for (i = 0; i < 9; ++i)                     // Goes through All the moves/squares in the board
+    {                       
+        if (board[i] == 0)                      // Check if move is empty
         {
-            board[i] = -1;                      // AI Test his move
-            int tempScore = -minimax(board, 1); // Call Minmax for opposing player
-            board[i] = 0;                       // Undo the AI test move
-            if (tempScore > score)
+            board[i] = -1;                      // Bot Test his move
+            int tempScore = -minimax(board, 1); 
+            board[i] = 0;                       // Resets the board back to its previous state
+            if (tempScore > score)              // Bot Makes its mov
             {
-                score = tempScore;
-                move = i;
+                score = tempScore;              // Returns a score based on minimax tree at a given node.
+                move = i;                       // Move = best possible move calculated from the minimax algorithm 
             }
         }
     }
-    // returns a score based on minimax tree at a given node.
-    board[move] = PLAYER_O;
+    board[move] = PLAYER_O;                     //Bot Takes its move
 }
 
-int minimax(int board[9], int player)
+int minimax(int board[9], int player)                   //Winnable Minimax Algorithm
 {
-    // How is the position like for player (their turn) on board?
-    int winner = win(board);
-    if (winner != 0) // Check if game ended
+    int winner = win(board);                            //Check if the game ended
+    if (winner != 0) 
         return winner * player;
 
     int move = -1;
-    int score = -1; // Losing moves are preferred to no move
+    int score = 0;                                       //Score of 0 startes of the algorithm thinking in a more neutral way
     int i;
-    for (i = 0; i < 9; ++i)
-    {                                                    // Loop for all moves,
-        if (board[i] == 0)                               // Check if move is empty
+    for (i = 0; i < 9; ++i)                              // For all moves
+    {                                                    
+        if (board[i] == 0)                               // Check if move is legal (Empty square)
         {                                                // If legal,
             board[i] = player;                           // Try the move
-            int thisScore = minimax(board, player * -1); // minmax the other player
+            int thisScore = minimax(board, player * -1); // Test the next players move and return the score back here
             if (thisScore > score)
             {
-                score = thisScore;
+                score = thisScore;                       //Constantly updates the score based on the next available win/lose/draw move
                 move = i;
-            }             // Pick the one that's worst for the opponent
-            board[i] = 0; // Reset board after try
+            }                                            // Pick the move that's worst for the opponent
+            board[i] = 0;                                // Reset board after try
         }
     }
-    // if (move == -1)
-    // {
-    //     return 0; // So if no good move just exit
-    // }
+
     return score;
 }
 
