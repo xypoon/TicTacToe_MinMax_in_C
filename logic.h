@@ -21,7 +21,7 @@ void draw_in_terminal(int b[9]);
 
 void computerMove(int board[9]);
 
-int minimax(int board[9], int player);
+int miniMax(int board[9], int player);
 
 int bestMove(int val, int depth, GameState *game);
 

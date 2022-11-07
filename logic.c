@@ -203,7 +203,7 @@ void playerMove(GameState *game, int row, int column)
     }
 }
 
-int win(const int board[9])
+int win(const int board[9])         //Win Conditions
 {
     unsigned winsStates[8][3] = {{0, 1, 2}, {3, 4, 5}, {6, 7, 8}, {0, 3, 6}, {1, 4, 7}, {2, 5, 8}, {0, 4, 8}, {2, 4, 6}}; //ALl Possible winnable states on the board
     for (int i = 0; i < 8; ++i) // loop through the different outcomes to check if value on the board are 3 in a row
@@ -252,18 +252,19 @@ void checkWin(GameState *game)
     }
 }
 
-char gridChar(int i) // Facilitates plotting of terminal tictactoe
+char gridChar(int i)// Convert the board[9] to X, O, or blank
 {
     switch (i)
     {
     case 1:
         return 'X';
-    case 0:
-        return ' ';
     case -1:
         return 'O';
+    default:
+        return ' ';
     }
 }
+
 
 void draw_in_terminal(int b[9]) // Plots tictactoe in terminal based on Gamestate Board
 {
@@ -283,8 +284,8 @@ void computerMove(int board[9])
     {                       
         if (board[i] == 0)                      // Check if move is empty
         {
-            board[i] = -1;                      // Bot Test his move
-            int tempScore = -minimax(board, 1); 
+        board[i] = PLAYER_O;                    // Bot Test his move
+            int tempScore = -miniMax(board, 1); 
             board[i] = 0;                       // Resets the board back to its previous state
             if (tempScore > score)              // Bot Makes its mov
             {
@@ -296,7 +297,7 @@ void computerMove(int board[9])
     board[move] = PLAYER_O;                     //Bot Takes its move
 }
 
-int minimax(int board[9], int player)                   //Winnable Minimax Algorithm
+int miniMax(int board[9], int player)                   //Winnable Minimax Algorithm
 {
     int winner = win(board);                            //Check if the game ended
     if (winner != 0) 
@@ -310,7 +311,7 @@ int minimax(int board[9], int player)                   //Winnable Minimax Algor
         if (board[i] == 0)                               // Check if move is legal (Empty square)
         {                                                // If legal,
             board[i] = player;                           // Try the move
-            int thisScore = minimax(board, player * -1); // Test the next players move and return the score back here
+            int thisScore = miniMax(board, player * -1); // Test the next players move and return the score back here
             if (thisScore > score)
             {
                 score = thisScore;                       //Constantly updates the score based on the next available win/lose/draw move
