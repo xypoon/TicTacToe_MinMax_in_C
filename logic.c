@@ -166,7 +166,6 @@ void botMove(GameState *game)
 {
     if (game->state == RUNNING_STATE && game->playerTurn == -1 && game->gamemode == 1)
     {
-        // printf("here");
         computerMove(game->board);     // Invoke the computer move
         draw_in_terminal(game->board); // Draw tictactoe move in terminal
 
@@ -265,28 +264,27 @@ char plotPlayer(int p) // Convert the board[9] to X, O, or blank
     }
 }
 
-void draw_in_terminal(int b[9]) // Plots tictactoe in terminal based on Gamestate Board
+void draw_in_terminal(int x[9]) // Plots tictactoe in terminal based on Gamestate Board
 {
-    printf(" %c | %c | %c\n", plotPlayer(b[0]), plotPlayer(b[1]), plotPlayer(b[2]));
+    printf(" %c | %c | %c\n", plotPlayer(x[0]), plotPlayer(x[1]), plotPlayer(x[2]));
     printf("---+---+---\n");
-    printf(" %c | %c | %c\n", plotPlayer(b[3]), plotPlayer(b[4]), plotPlayer(b[5]));
+    printf(" %c | %c | %c\n", plotPlayer(x[3]), plotPlayer(x[4]), plotPlayer(x[5]));
     printf("---+---+---\n");
-    printf(" %c | %c | %c\n\n", plotPlayer(b[6]), plotPlayer(b[7]), plotPlayer(b[8]));
+    printf(" %c | %c | %c\n\n", plotPlayer(x[6]), plotPlayer(x[7]), plotPlayer(x[8]));
 }
 
 void computerMove(int board[9])
 {
     int move = -1;
     int score = -1;
-    int i;
-    for (i = 0; i < 9; ++i) // Goes through All the moves/squares in the board
+    for (int i = 0; i < 9; ++i) // Goes through All the moves/squares in the board
     {
         if (board[i] == 0) // Check if move is empty
         {
             board[i] = PLAYER_O; // Bot Test his move
             int tempScore = -miniMax(board, 1);
             board[i] = 0;          // Resets the board back to its previous state
-            if (tempScore > score) // Bot Makes its mov
+            if (tempScore > score) // Bot Makes its move
             {
                 score = tempScore; // Returns a score based on minimax tree at a given node.
                 move = i;          // Move = best possible move calculated from the minimax algorithm
@@ -302,25 +300,25 @@ int miniMax(int board[9], int player) // Winnable Minimax Algorithm
     if (winner != 0)
         return winner * player;
 
-    int move = -1;
-    int score = 0; // Worst possible score
-    int i;
-    for (i = 0; i < 9; ++i) // For all moves
+    int testMove = -1;
+    int startScore = 0; 
+    for (int i = 0; i < 9; ++i) // For all moves
     {
         if (board[i] == 0)                               // Check if move is legal (Empty square)
         {                                                // If move is legal
             board[i] = player;                           // Make the move
             int thisScore = miniMax(board, player * -1); // Recursively check the next move
-            if (thisScore > score)
+            if (thisScore > startScore)
             {
-                score = thisScore; // Constantly updates the score based on the next available win/lose/draw move
-                move = i;
+                startScore = thisScore; // Constantly updates the score based on the next available win/lose/draw move
+
+                testMove = i;
             }             // Pick the move that's worst for the opponent
             board[i] = 0; // Reset board after try
         }
     }
 
-    return score;
+    return startScore;
 }
 
 int bestMove(int val, int depth, GameState *game)
