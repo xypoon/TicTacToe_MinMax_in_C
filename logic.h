@@ -15,7 +15,7 @@ void playerMove(GameState *game, int row, int column);
 
 void checkWin(GameState *game);
 
-char gridChar(int i);
+char plotPlayer(int p);
 
 void draw_in_terminal(int b[9]);
 
