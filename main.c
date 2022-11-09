@@ -37,14 +37,14 @@ int main(int argc, char *argv[])
   renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
   // Initialise GameState
-  GameState gameState = {
-      // Initilise Empty Board
-      .board = {EMPTY, EMPTY, EMPTY,
-                EMPTY, EMPTY, EMPTY,
-                EMPTY, EMPTY, EMPTY},
-      .playerTurn = PLAYER_X, // Set Player to go first
-      .state = RUNNING_STATE, // Set State to running
-      .turn = 1};             // Set default game turn 1
+    GameState gameState = {
+        // Initilise Empty Board
+        .board = {EMPTY, EMPTY, EMPTY,
+                  EMPTY, EMPTY, EMPTY,
+                  EMPTY, EMPTY, EMPTY},
+        .playerTurn = PLAYER_X, // Set Player to go first
+        .state = RUNNING_STATE, // Set State to running
+        .turn = 1};             // Set default game turn 1
 
   // Event Loop
   int done = 0; // Initialise done = 0, if 1 means completed and will stop program
