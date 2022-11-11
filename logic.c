@@ -205,12 +205,11 @@ void playerMove(GameState *game, int row, int column)
 int winCon(int gameBoard[9]) // Win Conditions
 {
     int winsStates[8][3] = {{0, 3, 6}, {1, 4, 7}, {2, 5, 8}, {0, 4, 8}, {2, 4, 6}, {0, 1, 2}, {3, 4, 5}, {6, 7, 8}}; // ALl Possible winnable states on the board
-    for (int i = 0; i < 8; ++i)                                                                                      // loop through the different outcomes to check if value on the board are 3 in a row
+    // check if any of the win states are met
+    for (int i = 0; i < 8; i++) // loop through the different outcomes to check if value on the board are 3 in a row
     {
-        if (gameBoard[winsStates[i][0]] != 0 &&
-            gameBoard[winsStates[i][0]] == gameBoard[winsStates[i][1]] &&
-            gameBoard[winsStates[i][0]] == gameBoard[winsStates[i][2]]) // Check if the value on the board are the same (Check if the player has won)
-            return gameBoard[winsStates[i][0]];                         // Return 1 if Player X Wins, return -1 if Player O Wins
+        if (gameBoard[winsStates[i][0]] != 0 && gameBoard[winsStates[i][0]] == gameBoard[winsStates[i][1]] && gameBoard[winsStates[i][0]] == gameBoard[winsStates[i][2]]) // Check if the value on the board are the same (Check if the player has won)
+            return gameBoard[winsStates[i][0]];                                                                                                                           // Return 1 if Player X Wins, return -1 if Player O Wins
     }
     return 0; // Return 0 if no one has won
 }
@@ -266,11 +265,12 @@ char plotPlayer(int p) // Convert the board[9] to X, O, or blank
 
 void draw_in_terminal(int x[9]) // Plots tictactoe in terminal based on Gamestate Board
 {
-    printf(" %c | %c | %c\n", plotPlayer(x[0]), plotPlayer(x[1]), plotPlayer(x[2]));
-    printf("---+---+---\n");
-    printf(" %c | %c | %c\n", plotPlayer(x[3]), plotPlayer(x[4]), plotPlayer(x[5]));
-    printf("---+---+---\n");
-    printf(" %c | %c | %c\n\n", plotPlayer(x[6]), plotPlayer(x[7]), plotPlayer(x[8]));
+    printf("==============\n");
+    for (int i = 0; i < 3; i++)
+    {
+        printf("| %c | %c | %c |\n", plotPlayer(x[i * 3]), plotPlayer(x[i * 3 + 1]), plotPlayer(x[i * 3 + 2]));
+        printf("==============\n");
+    }
 }
 
 void computerMove(int gameBoard[9])
