@@ -202,15 +202,15 @@ void playerMove(GameState *game, int row, int column)
     }
 }
 
-int winCon(const int board[9]) // Win Conditions
+int winCon(int gameBoard[9]) // Win Conditions
 {
-    unsigned winsStates[8][3] = {{0, 3, 6}, {1, 4, 7}, {2, 5, 8}, {0, 4, 8}, {2, 4, 6}, {0, 1, 2}, {3, 4, 5}, {6, 7, 8}}; // ALl Possible winnable states on the board
-    for (int i = 0; i < 8; ++i)                                                                                           // loop through the different outcomes to check if value on the board are 3 in a row
+    int winsStates[8][3] = {{0, 3, 6}, {1, 4, 7}, {2, 5, 8}, {0, 4, 8}, {2, 4, 6}, {0, 1, 2}, {3, 4, 5}, {6, 7, 8}}; // ALl Possible winnable states on the board
+    for (int i = 0; i < 8; ++i)                                                                                      // loop through the different outcomes to check if value on the board are 3 in a row
     {
-        if (board[winsStates[i][0]] != 0 &&
-            board[winsStates[i][0]] == board[winsStates[i][1]] &&
-            board[winsStates[i][0]] == board[winsStates[i][2]]) // Check if the value on the board are the same (Check if the player has won)
-            return board[winsStates[i][0]];                     // Return 1 if Player X Wins, return -1 if Player O Wins
+        if (gameBoard[winsStates[i][0]] != 0 &&
+            gameBoard[winsStates[i][0]] == gameBoard[winsStates[i][1]] &&
+            gameBoard[winsStates[i][0]] == gameBoard[winsStates[i][2]]) // Check if the value on the board are the same (Check if the player has won)
+            return gameBoard[winsStates[i][0]];                         // Return 1 if Player X Wins, return -1 if Player O Wins
     }
     return 0; // Return 0 if no one has won
 }
@@ -285,8 +285,8 @@ void computerMove(int gameBoard[9])
         {
             gameBoard[i] = PLAYER_O; // Bot Test his move
             miniMaxScore = -miniMax(gameBoard, 1);
-            gameBoard[i] = 0;             // Resets the board back to its previous state after testing
-            if (miniMaxScore > score) // Bot Makes its move 
+            gameBoard[i] = 0;         // Resets the board back to its previous state after testing
+            if (miniMaxScore > score) // Bot Makes its move
             {
                 score = miniMaxScore; // Returns a score based on minimax tree at a given node.
                 move = i;             // Move = best possible move calculated from the minimax algorithm
@@ -307,7 +307,7 @@ int miniMax(int gameBoard[9], int player) // Winnable Minimax Algorithm
     for (int i = 0; i < 9; i++) // For all moves
     {
         if (gameBoard[i] == 0)                               // Check if move is legal (Empty square)
-        {                                                // If move is legal
+        {                                                    // If move is legal
             gameBoard[i] = player;                           // Make the move
             int thisScore = miniMax(gameBoard, player * -1); // Recursively check the next move
             if (thisScore > startScore)
@@ -315,7 +315,7 @@ int miniMax(int gameBoard[9], int player) // Winnable Minimax Algorithm
                 startScore = thisScore; // Constantly updates the score based on the next available win/lose/draw move
 
                 testMove = i;
-            }             // Pick the move that's worst for the opponent
+            }                 // Pick the move that's worst for the opponent
             gameBoard[i] = 0; // Reset board after try
         }
     }
@@ -333,7 +333,7 @@ int bestMove(int val, int depth, GameState *game)
 
     for (move = 0; move < 9; move++)
     {
-        if (game->board[move])  //If the board position not equal 0, skip to position
+        if (game->board[move]) // If the board position not equal 0, skip to position
             continue;
 
         changed = game->board[move] = val;        // make the test move
