@@ -13,7 +13,6 @@
 #define PLAYER_X_WON_STATE 1
 #define PLAYER_O_WON_STATE -1
 #define TIE_STATE 3
-//#define QUIT_STATE 4
 
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480

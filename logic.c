@@ -329,7 +329,7 @@ int bestMove(int val, int depth, GameState *game)
     int best = -1, changed = 0;
 
     if ((score = winCon(game->board)))     // check the current board which player wins
-        return (score == val) ? 1 : -1; // HELP
+        return (score == val) ? 1 : -1; // Return the previous player win value
 
     for (move = 0; move < 9; move++)
     {
