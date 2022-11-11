@@ -301,7 +301,7 @@ int miniMax(int board[9], int player) // Winnable Minimax Algorithm
         return winner * player;
 
     int testMove = -1;
-    int startScore = 0; 
+    int startScore = 0;
     for (int i = 0; i < 9; ++i) // For all moves
     {
         if (board[i] == 0)                               // Check if move is legal (Empty square)
@@ -326,21 +326,21 @@ int bestMove(int val, int depth, GameState *game)
     int move, score;
     int best = -1, changed = 0;
 
-    if ((score = winCon(game->board)))     // check the current board which player wins
-        return (score == val) ? 1 : -1; // HELP
+    if ((score = winCon(game->board)))  // check the current board which player wins
+        return (score == val) ? 1 : -1; // Stop if next move wins for AI
 
     for (move = 0; move < 9; move++)
     {
-        if (game->board[move])
+        if (game->board[move])  //If the board position not equal 0, skip to position
             continue;
 
-        changed = game->board[move] = val;
-        score = -bestMove(-val, depth + 1, game);
-        game->board[move] = 0;
+        changed = game->board[move] = val;        // make the test move
+        score = -bestMove(-val, depth + 1, game); // run minmax to minimise for opposing player
+        game->board[move] = 0;                    // undo moves
 
         if (score <= best)
-            continue;
-        if (!depth)
+            continue; // If score is not greater than current best skip code and go to next
+        if (!depth)   // If depth not equal to 0
         {
             best_move = move;
         }
