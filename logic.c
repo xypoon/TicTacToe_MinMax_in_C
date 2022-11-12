@@ -283,12 +283,12 @@ void computerMove(int gameBoard[9])
     {
         if (gameBoard[i] == 0) // Check if move is empty
         {
-            gameBoard[i] = PLAYER_O; // Bot Test his move
-            miniMaxScore = -miniMax(gameBoard, 1);
-            gameBoard[i] = 0;         // Resets the board back to its previous state after testing
-            if (miniMaxScore > score) // Bot Makes its move
+            gameBoard[i] = PLAYER_O;                      // Bot Test his move
+            miniMaxScore = -miniMax(gameBoard, PLAYER_X); // Invert the score to get the best move for the bot
+            gameBoard[i] = 0;                             // Resets the board back to its previous state after testing
+            if (miniMaxScore > score)                     // Bot Makes its move
             {
-                score = miniMaxScore; // Returns a score based on minimax tree at a given node.
+                score = miniMaxScore; // Set the score to the best move
                 move = i;             // Move = best possible move calculated from the minimax algorithm
             }
         }
@@ -296,27 +296,27 @@ void computerMove(int gameBoard[9])
     gameBoard[move] = PLAYER_O; // Bot Takes its move
 }
 
-int miniMax(int gameBoard[9], int player) // Winnable Minimax Algorithm
+int miniMax(int gameBoard[9], int testPlayer) // Winnable Minimax Algorithm
 {
-    int winner = winCon(gameBoard); // Check if the game ended
-    if (winner != 0)
-        return winner * player;
+    int win = winCon(gameBoard); // Check if the game ended
+    if (win != 0)
+        return win * testPlayer;
 
     int testMove = -1;
     int startScore = 0;
-    for (int i = 0; i < 9; i++) // For all moves
+    for (int i = 0; i < 9; i++) // Loops through all the moves in the board
     {
-        if (gameBoard[i] == 0)                               // Check if move is legal (Empty square)
-        {                                                    // If move is legal
-            gameBoard[i] = player;                           // Make the move
-            int thisScore = miniMax(gameBoard, player * -1); // Recursively check the next move
-            if (thisScore > startScore)
+        if (gameBoard[i] == 0)                                   // Check if move is legal (Empty square)
+        {                                                        // If move is legal
+            gameBoard[i] = testPlayer;                           // Make the move
+            int testScore = miniMax(gameBoard, testPlayer * -1); // Recursively check the next move
+            if (testScore > startScore)
             {
-                startScore = thisScore; // Constantly updates the score based on the next available win/lose/draw move
+                startScore = testScore; // Constantly updates the score based on the next available win/lose/draw move
 
                 testMove = i;
-            }                 // Pick the move that's worst for the opponent
-            gameBoard[i] = 0; // Reset board after try
+            }
+            gameBoard[i] = 0; // Reset the board back to its previous state
         }
     }
 
@@ -328,7 +328,7 @@ int bestMove(int val, int depth, GameState *game)
     int move, score;
     int best = -1, changed = 0;
 
-    if ((score = winCon(game->board)))     // check the current board which player wins
+    if ((score = winCon(game->board)))  // check the current board which player wins
         return (score == val) ? 1 : -1; // Return the previous player win value
 
     for (move = 0; move < 9; move++)
