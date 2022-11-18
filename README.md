@@ -7,15 +7,18 @@ gcc -I src/SDL2 -L src/lib -g logic.c render.c -o main main.c -lmingw32 -lSDL2ma
 ``` 
 
 
-# Run program 
+# Run Program 
 To run the Tic Tac Toe game 
 ```
 ./main.exe
 ```
 
 
-# Close program 
+# Close Program 
 Press `ESC` to close the program when in-game. 
-``` bash
 
 Left click on the `X` button to close the program when in the menu.  
+
+
+# Game Demonstration Video 
+[Youtube Demo Video](https://youtu.be/JUGuwiJ6Hlg)
