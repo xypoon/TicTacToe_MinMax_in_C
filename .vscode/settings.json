@@ -6,6 +6,10 @@
         "game.h": "c",
         "sdl_ttf.h": "c",
         "stdio.h": "c",
-        "stdlib.h": "c"
+        "stdlib.h": "c",
+        "sdl.h": "c",
+        "render.h": "c",
+        "math.h": "c",
+        "sdl_image.h": "c"
     }
 }

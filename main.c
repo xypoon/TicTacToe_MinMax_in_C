@@ -1,14 +1,13 @@
 // Compile Code
-// As you add new SDL2 libraries, add their dll name to the compile command
-// gcc -I src/include -L src/lib -g logic.c render.c -o main tictactoe.c -lmingw32 -lSDL2main -lSDL2 -lSDL2_image
+// gcc -I src/SDL2 -L src/lib -g logic.c render.c -o main main.c -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf
 
 //  Import Libraries
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL_ttf.h>
+#include "src/SDL2/SDL.h"
+#include "src/SDL2/SDL_image.h"
+#include "src/SDL2/SDL_ttf.h"
 
 #include "./render.h"
 #include "./game.h"

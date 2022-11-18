@@ -1,10 +1,11 @@
 //  Import Libraries
-#include <SDL2/SDL.h>
+#include "src/SDL2/SDL.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL_ttf.h>
+
+#include "src/SDL2/SDL_image.h"
+#include "src/SDL2/SDL_ttf.h"
 
 #include "render.h"
 #include "game.h"
