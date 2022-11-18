@@ -1,9 +1,4 @@
 # CSC 1103 Tic-Tac-Toe Game
 
 # Build
-Build with `ctrl-shift-b` in VSCode
-
-### Weightage
-1. `50%` : GUI + manual two players mode (Task 1 + Task 2)
-2. `30%` : AI MiniMax algorithm covering one player mode (Task 3)
-3. `20%` : Imperfect MiniMax algorithm (Task 4a) or ML algorithm (Task 4b)
+Build with `gcc -I src/SDL2 -L src/lib -g logic.c render.c -o main main.c -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf` 
